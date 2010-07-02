@@ -43,7 +43,7 @@ function createTabPanel(){
         fields: todoItemFields,
         url: '/items/',
         autoLoad: true,
-		listeners: storeListeners
+        listeners: storeListeners
     
     });
     tabObjects.unshift({
@@ -63,7 +63,7 @@ function createTabPanel(){
     
     tabPanel = new Ext.TabPanel({
         id: 'tabPanel',
-        activeTab:  0,
+        activeTab: 0,
         height: 500,
         deferredRender: true,
         hideMode: Ext.isIE ? 'offsets' : 'display',
@@ -81,14 +81,14 @@ function createTabPanel(){
             iconCls: 'newItem',
             tooltip: 'Click here to add a new todo item',
             handler: addNewItem
-        },{
-			text: 'Add a new category',
-			id: 'newCategoryButton',
-			iconCls: 'newItem',
-			tooltip: 'Click here to add a new category',
-			handler: addNewCategory
-			
-		} ],
+        }, {
+            text: 'Add a new category',
+            id: 'newCategoryButton',
+            iconCls: 'newItem',
+            tooltip: 'Click here to add a new category',
+            handler: addNewCategory
+        
+        }],
         renderTo: 'todoTabPanel'
     
     });
@@ -135,13 +135,13 @@ function createColumns(showcategoryname){
 
 
 function addNewCategory(){
-	if(addCategoryDialog){
-		addCategoryDialog.show();
-		Ext.fly('newCategoryName').update('');
-		return;
-	}
-	
-	var content = '<p>Give your new category a name</p>';
+    if (addCategoryDialog) {
+        addCategoryDialog.show();
+        Ext.fly('newCategoryName').update('');
+        return;
+    }
+    
+    var content = '<p>Give your new category a name</p>';
     content += "<input type='text' id='newCategoryName' maxLength='128'></input>";
     content += '<button type="button" id="newCategoryDialogButton">Create</button>';
     addCategoryDialog = new Ext.Window({
@@ -162,54 +162,61 @@ function addNewCategory(){
     addCategoryDialog.show(Ext.fly('listHeader'));
     Ext.EventManager.on('newCategoryDialogButton', 'click', submitNewCategory);
 }
-	
-	
+
+
 function submitNewCategory(){
-	var newCategoryName = Ext.fly('newCategoryName').getValue();
-	if (!newCategoryName) {
-		return;
-	}
-	Ext.Ajax.request({
-		method: 'POST',
-		url: '/category/',
-		params: {
-			name: newCategoryName
-		},
-		success: function(responseObject){
-			debugger;
-			var data = JSON.parse(responseObject.responseText);
-			var category = JSON.parse(data.newCategory);
-			categories = JSON.parse(data.allCategories);
-			var store = new Ext.data.JsonStore({
-				fields: todoItemFields,
-				url: '/category/{0}/items/'.strFormat(category.id),
-				autoSave: true,
-				autoLoad: true,
-				listeners: storeListeners
-			});
-			var grid = new Ext.grid.EditorGridPanel({
-				title: capWord(category.name),
-				id: 'tab_{0}'.strFormat(category.id),
-				store: store,
-				cm: createColumns(),
-				selModel: new Ext.grid.RowSelectionModel(),
-				plugins: new Ext.grid.CheckColumn({
-					id: 'completed',
-					header: 'Complete',
-					dataIndex: 'completed',
-					width: 25
-				}),
-			
-			});
-			tabPanel.add(grid);
-			tabPanel.setActiveTab(grid.id);
-			addCategoryDialog.hide();
-		}
-	});
+    var newCategoryName = Ext.fly('newCategoryName').getValue();
+    if (!newCategoryName) {
+        return;
+    }
+    Ext.Ajax.request({
+        method: 'POST',
+        url: '/category/',
+        params: {
+            name: newCategoryName
+        },
+        success: function(responseObject){
+            debugger;
+            var data = JSON.parse(responseObject.responseText);
+            var category = JSON.parse(data.newCategory);
+            categories = JSON.parse(data.allCategories);
+            var store = new Ext.data.JsonStore({
+                fields: todoItemFields,
+                url: '/category/{0}/items/'.strFormat(category.id),
+                autoSave: true,
+                autoLoad: true,
+                listeners: storeListeners
+            });
+            var grid = new Ext.grid.EditorGridPanel({
+                title: capWord(category.name),
+                id: 'tab_{0}'.strFormat(category.id),
+                store: store,
+                cm: createColumns(),
+                selModel: new Ext.grid.RowSelectionModel(),
+                plugins: new Ext.grid.CheckColumn({
+                    id: 'completed',
+                    header: 'Complete',
+                    dataIndex: 'completed',
+                    width: 25
+                }),
+            
+            });
+            tabPanel.add(grid);
+            tabPanel.setActiveTab(grid.id);
+            addCategoryDialog.hide();
+        },
+        failure: function(responseObject){
+            userMessage('errors', responseObject.responseText)
+        }
+    });
 }
 
 function addNewItem(){
-    
+    if (addItemDialog) {
+        addItemDialog.show();
+        Ext.getDom('newItemName').value = '';
+        return;
+    }
     var content = '<p>Give your new item a name</p>';
     content += "<input type='text' id='newItemName' maxLength='128'></input>";
     content += "Category: <select id='categorySelect' name='categoryID'>";
@@ -223,6 +230,7 @@ function addNewItem(){
     addItemDialog = new Ext.Window({
         width: 320,
         height: 165,
+        closeAction: 'hide',
         bodyStyle: {
             padding: '10px'
         },
@@ -253,49 +261,56 @@ function submitNewItem(){
         category_id: categoryID
     });
     grid.getStore().insert(0, item);
-	grid.getStore().sort();
+    grid.getStore().sort();
     addItemDialog.hide();
 }
 
 
 function createItemEventHandler(store, records){
-	if(!records){
-		return;
-	}
-	var newItem = records[0].data;
-	Ext.Ajax.request({
-		method: 'POST',
-		url: '/category/{0}/items/'.strFormat(newItem.category_id),
-		params: {itemName: newItem.name,
-				 categoryID: newItem.category_id},
-		success: function(responseObject){
-			 var newItem = JSON.parse(responseObject.responseText);
-			 tabPanel.setActiveTab('tab_{0}'.strFormat(newItem.category_id));
-			 reloadAllDataGrid()
-			 store.reload();
-     	 }
-	});
-	
+    if (!records) {
+        return;
+    }
+    var newItem = records[0].data;
+    Ext.Ajax.request({
+        method: 'POST',
+        url: '/category/{0}/items/'.strFormat(newItem.category_id),
+        params: {
+            itemName: newItem.name,
+            categoryID: newItem.category_id
+        },
+        success: function(responseObject){
+            var newItem = JSON.parse(responseObject.responseText);
+            tabPanel.setActiveTab('tab_{0}'.strFormat(newItem.category_id));
+            reloadAllDataGrid()
+            store.reload();
+        },
+        failure: function(responseObject){
+            userMessage('errors', responseObject.responseText)
+        }
+    });
+    
 }
 
 
 function updateItemEventHandler(store, records){
-	var params = {
-		itemName: records.data.name,
-		description: records.data.description,
-		completed: records.data.completed,
-		id: records.id
-	};
-	Ext.Ajax.request({
-		method: 'PUT',
-		url: '/category/{0}/items/'.strFormat(records.data.category_id),
-		params: params,
-		success: function(){
-			reloadAllDataGrid();
-		},
-		headers:{'Content-Type': 'application/x-www-form-urlencoded'}
-	});
-	store.reload();
+    var params = {
+        itemName: records.data.name,
+        description: records.data.description,
+        completed: records.data.completed,
+        id: records.id
+    };
+    Ext.Ajax.request({
+        method: 'PUT',
+        url: '/category/{0}/items/'.strFormat(records.data.category_id),
+        params: params,
+        success: function(){
+            reloadAllDataGrid();
+        },
+        failure: function(responseObject){
+            userMessage('errors', responseObject.responseText)
+        }
+    });
+    store.reload();
 }
 
 function deleteItemEventHandler(store, records){
@@ -304,7 +319,7 @@ function deleteItemEventHandler(store, records){
 }
 
 function reloadAllDataGrid(){
-	var allDataGrid = tabPanel.get('allitems_tab');
-	allDataGrid.getStore().reload();
-	
+    var allDataGrid = tabPanel.get('allitems_tab');
+    allDataGrid.getStore().reload();
+    
 }

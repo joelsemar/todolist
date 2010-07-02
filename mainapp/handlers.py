@@ -26,6 +26,12 @@ class TodoItemHandler(BaseHandler):
         except Category.DoesNotExist:
             return HttpResponse("Oops, an error has occurred, please try again later", status=500)
         
+        try:
+            todoItem = TodoItem.objects.get(name=itemName, category=category)
+            return HttpResponse("You already have that item in that category.", status=500)
+        except TodoItem.DoesNotExist:
+            pass
+        
         todoItem = TodoItem.objects.create(name=itemName, 
                                            category=category,
                                            when_created=now,

@@ -35,6 +35,7 @@ class TodoItem(models.Model):
         
     class Meta:
         db_table = 'todoitem'
+        unique_together = ('name', 'category')
         verbose_name = 'Todo Item'
         verbose_name_plural = 'Todo Items'
     
