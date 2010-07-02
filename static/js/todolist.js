@@ -38,32 +38,12 @@ function createTabPanel(){
         
         
     }
-    var allDataStore = new Ext.data.JsonStore({
-        fields: todoItemFields,
-        url: '/items/',
-        autoLoad: true,
-        listeners: storeListeners
-    
-    });
-    tabObjects.unshift({
-        title: 'All items',
-        id: 'allitems_tab',
-        store: allDataStore,
-        cm: createColumns(true),
-        selModel: new Ext.grid.RowSelectionModel(),
-        plugins: new Ext.grid.CheckColumn({
-            id: 'completed',
-            header: 'Complete',
-            dataIndex: 'completed',
-            width: 25
-        })
-    
-    })
     
     tabPanel = new Ext.TabPanel({
         id: 'tabPanel',
         activeTab: 0,
         height: 500,
+		autoScroll: true,
         deferredRender: true,
         hideMode: Ext.isIE ? 'offsets' : 'display',
         defaults: {
@@ -136,7 +116,7 @@ function createColumns(showcategoryname){
 function addNewCategory(){
     if (addCategoryDialog) {
         addCategoryDialog.show();
-        Ext.fly('newCategoryName').update('');
+        Ext.getDom('newCategoryName').value = '';
         return;
     }
     
@@ -151,7 +131,7 @@ function addNewCategory(){
         },
         title: "Create a new Todo Category",
         html: content,
-		closeAction: 'hide',
+        closeAction: 'hide',
         modal: true,
         listeners: {
             'beforeshow': function(){
@@ -206,7 +186,7 @@ function submitNewCategory(){
         },
         failure: function(responseObject){
             userMessage('errors', responseObject.responseText);
-			addCategoryDialog.hide();
+            addCategoryDialog.hide();
         }
     });
 }
@@ -219,16 +199,16 @@ function addNewItem(){
     }
     var content = '<p>Give your new item a name</p>';
     content += "<input type='text' id='newItemName' maxLength='128'></input>";
-    content += "Category: <select id='categorySelect' name='categoryID'>";
+    content += "<div>Category: <select id='categorySelect' name='categoryID'>";
     for (var i = 0; i < categories.length; i++) {
         var category = categories[i];
         var selected = category.id === parseInt(tabPanel.getActiveTab().id.replace('tab_', ''), 10);
         content += "<option value={0} {1}>{2}</option>".strFormat(category.id, selected ? 'selected' : '', category.name);
     }
     content += '</select>';
-    content += '<button type="button" id="newItemDialogButton">Create</button>';
+    content += '<button type="button" id="newItemDialogButton">Create</button></div>';
     addItemDialog = new Ext.Window({
-        width: 320,
+        width: 310,
         height: 165,
         closeAction: 'hide',
         bodyStyle: {
@@ -251,34 +231,36 @@ function addNewItem(){
 function submitNewItem(){
     var itemName = Ext.get('newItemName').getValue();
     var categoryID = Ext.get('categorySelect').getValue();
-    var grid = tabPanel.get('tab_{0}'.strFormat(categoryID));
-    var TodoItem = grid.getStore().recordType;
     if (!itemName) {
         return;
     }
-    var item = new TodoItem({
-        name: itemName,
-        category_id: categoryID
-    });
+    
     Ext.Ajax.request({
         method: 'POST',
-        url: '/category/{0}/items/'.strFormat(item.category_id),
+        url: '/category/{0}/items/'.strFormat(categoryID),
         params: {
-            itemName: newItem.name,
-            categoryID: newItem.category_id
+            itemName: itemName,
         },
         success: function(responseObject){
             var newItem = JSON.parse(responseObject.responseText);
-            tabPanel.setActiveTab('tab_{0}'.strFormat(newItem.category_id));
-            reloadAllDataGrid()
-            store.reload();
-			grid.getStore().insert(0, item);
-    		grid.getStore().sort();
-    		addItemDialog.hide();
+            
+            var grid = tabPanel.get('tab_{0}'.strFormat(newItem.category_id));
+    		var TodoItem = grid.getStore().recordType;
+			var item = new TodoItem({
+                name: newItem.name,
+                category_id: newItem.category_id
+            });
+			tabPanel.setActiveTab('tab_{0}'.strFormat(newItem.category_id));
+            grid.getStore().add(item);
+            grid.getStore().sort();
+            grid.getStore().reload();
         },
         failure: function(responseObject){
             userMessage('errors', responseObject.responseText)
-        }
+        },
+		callback: function(){
+			addItemDialog.hide();
+		}
     });
     
 }
@@ -295,9 +277,6 @@ function updateItemEventHandler(store, records){
         method: 'PUT',
         url: '/category/{0}/items/'.strFormat(records.data.category_id),
         params: params,
-        success: function(){
-            reloadAllDataGrid();
-        },
         failure: function(responseObject){
             userMessage('errors', responseObject.responseText)
         }
@@ -310,8 +289,4 @@ function deleteItemEventHandler(store, records){
 
 }
 
-function reloadAllDataGrid(){
-    var allDataGrid = tabPanel.get('allitems_tab');
-    allDataGrid.getStore().reload();
-    
-}
+

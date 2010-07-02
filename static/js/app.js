@@ -3,13 +3,7 @@ var MIN_OPACITY = 0;
 var MESSAGE_DURATION = 4000;
 var FADE_DURATION = 0.6;
 
-Ext.Ajax.addListener({'beforerequest': function(){
-	Ext.select('.x-grid3-row').setStyle('cursor', 'progress');
-}});
 
-Ext.Ajax.addListener({'requestcomplete': function(){
-	Ext.select('.x-grid3-row').setStyle('cursor', 'default');
-}});
 Ext.QuickTips.init();
 function userMessage(type, messageText) {
 	// Takes custom text and displays it using the normal message/error format

@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 #Project specific deps
 from todolist.mainapp.models import Category, TodoItem
 from todolist.util import toDict
-DEFAULT_CATEGORIES = ['Personal', 'Work', 'Miscellaneous'] 
+DEFAULT_CATEGORIES = ['Default', 'Personal', 'Work', 'Miscellaneous'] 
 
 def home(request):
     if not request.user.is_authenticated():
@@ -53,25 +53,30 @@ def createUser(request):
 
 
 def newCategory(request):
+    """
+    Allows the user to create a new category for their todo items
+    """
     if not request.user.is_authenticated():
         return HttpResponse(status=401)
     
     name = request.POST.get('name')
     if not name:
         return HttpResponse("Please provide a name for your category", status=500)
+    
+    #prevent dupes
     try:
         category = Category.objects.get(name=name, user=request.user)
-        return HttpResponse("Please provide a name for your category", status=500)
+        return HttpResponse("You already have a category with that name.", status=500)
     except Category.DoesNotExist:
         pass
     
     category = Category.objects.create(name=name, user=request.user, when_created=datetime.datetime.utcnow())
     allCategories = Category.objects.filter(user=request.user)
+    
     responseDict = {}
     responseDict['newCategory'] = simplejson.dumps(toDict(category), cls=DateTimeAwareJSONEncoder, indent=4)
     responseDict['allCategories'] = simplejson.dumps([toDict(category) for category in allCategories], cls=DateTimeAwareJSONEncoder, indent=4)
     return HttpResponse(simplejson.dumps(responseDict))
-    return HttpResponse("{newCategory: %s, allCategories: %s}" % (newCategory, allCategories), status=200)
 
 def userItemService(request):
     """
