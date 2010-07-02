@@ -46,14 +46,18 @@ function createTabPanel(){
         activeTab: 0,
         height: 500,
 		autoScroll: true,
+		enableTabScroll:true,
         deferredRender: true,
         hideMode: Ext.isIE ? 'offsets' : 'display',
+	    plugins: new Ext.ux.TabCloseMenu(),
         defaults: {
             xtype: 'editorgrid',
             viewConfig: {
                 forceFit: true
             },
-            height: 500
+            height: 500,
+			closable:true
+
         },
         items: tabObjects,
         tbar: [{
@@ -270,6 +274,7 @@ function submitNewItem(){
 
 
 function updateItemEventHandler(store, records){
+	//post our new changes to the server
     var params = {
         itemName: records.data.name,
         description: records.data.description,
@@ -286,6 +291,8 @@ function updateItemEventHandler(store, records){
     });
     store.reload();
 }
+
+
 
 function deleteItemEventHandler(store, records){
 

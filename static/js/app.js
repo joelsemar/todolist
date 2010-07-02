@@ -6,7 +6,8 @@ var FADE_DURATION = 0.6;
 
 Ext.QuickTips.init();
 function userMessage(type, messageText) {
-	// Takes custom text and displays it using the normal message/error format
+	// Takes custom text and displays it to the user
+	// an 'errors' type will result in a red box, while anyting else will be green
 	
 	var alertBox = Ext.getDom('alertBox');
 	Ext.fly('alertBoxText').update(messageText);

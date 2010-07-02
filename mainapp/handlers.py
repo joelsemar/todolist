@@ -93,13 +93,6 @@ class TodoItemHandler(BaseHandler):
 
 
     def delete(self, request, categoryID):
-        post = Blogpost.objects.get(slug=post_slug)
-
-        if not request.user == post.author:
-            return rc.FORBIDDEN # returns HTTP 401
-
-        post.delete()
-
-        return rc.DELETED # returns HTTP 204
+        pass
 
 
