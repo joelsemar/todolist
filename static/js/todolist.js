@@ -3,7 +3,6 @@ var addCategoryDialog;
 var addItemDialog;
 var tabPanel;
 var storeListeners = {
-    'add': createItemEventHandler,
     'update': updateItemEventHandler,
     'delete': deleteItemEventHandler
 };
@@ -152,6 +151,7 @@ function addNewCategory(){
         },
         title: "Create a new Todo Category",
         html: content,
+		closeAction: 'hide',
         modal: true,
         listeners: {
             'beforeshow': function(){
@@ -176,7 +176,6 @@ function submitNewCategory(){
             name: newCategoryName
         },
         success: function(responseObject){
-            debugger;
             var data = JSON.parse(responseObject.responseText);
             var category = JSON.parse(data.newCategory);
             categories = JSON.parse(data.allCategories);
@@ -206,7 +205,8 @@ function submitNewCategory(){
             addCategoryDialog.hide();
         },
         failure: function(responseObject){
-            userMessage('errors', responseObject.responseText)
+            userMessage('errors', responseObject.responseText);
+			addCategoryDialog.hide();
         }
     });
 }
@@ -260,20 +260,9 @@ function submitNewItem(){
         name: itemName,
         category_id: categoryID
     });
-    grid.getStore().insert(0, item);
-    grid.getStore().sort();
-    addItemDialog.hide();
-}
-
-
-function createItemEventHandler(store, records){
-    if (!records) {
-        return;
-    }
-    var newItem = records[0].data;
     Ext.Ajax.request({
         method: 'POST',
-        url: '/category/{0}/items/'.strFormat(newItem.category_id),
+        url: '/category/{0}/items/'.strFormat(item.category_id),
         params: {
             itemName: newItem.name,
             categoryID: newItem.category_id
@@ -283,6 +272,9 @@ function createItemEventHandler(store, records){
             tabPanel.setActiveTab('tab_{0}'.strFormat(newItem.category_id));
             reloadAllDataGrid()
             store.reload();
+			grid.getStore().insert(0, item);
+    		grid.getStore().sort();
+    		addItemDialog.hide();
         },
         failure: function(responseObject){
             userMessage('errors', responseObject.responseText)
