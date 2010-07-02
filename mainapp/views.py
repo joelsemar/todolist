@@ -24,7 +24,7 @@ def home(request):
     responseDict = {'categories':simplejson.dumps([toDict(category) for category in categories],
                                                   cls=DateTimeAwareJSONEncoder, indent=4)}
     
-    return render_to_response('home.html', responseDict,  context_instance=RequestContext(request))
+    return render_to_response('home.html', responseDict, context_instance=RequestContext(request))
 
 
 def createUser(request):
@@ -34,6 +34,7 @@ def createUser(request):
     if not all([username, password]):
         return HttpResponse('Username and password are required', status=401)
     
+    #prevent dupes
     try:
         User.objects.get(username=username)
         return HttpResponse('That Username is already taken', status=401)
@@ -44,6 +45,7 @@ def createUser(request):
     user = authenticate(username=username, password=password)
     if user:
         auth_login(request, user)
+        #set up some default categories, ie "Work, Personal, etc"
         for category in DEFAULT_CATEGORIES:
             category = Category.objects.create(user=user, name=category, when_created=datetime.datetime.utcnow())
         
@@ -70,6 +72,7 @@ def newCategory(request):
     except Category.DoesNotExist:
         pass
     
+    #return the newly made category and an updated list of all
     category = Category.objects.create(name=name, user=request.user, when_created=datetime.datetime.utcnow())
     allCategories = Category.objects.filter(user=request.user)
     
@@ -91,6 +94,9 @@ def userItemService(request):
 
     
 def login(request):
+    """
+    Allows the user to login
+    """
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
     

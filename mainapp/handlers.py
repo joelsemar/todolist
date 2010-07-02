@@ -72,6 +72,13 @@ class TodoItemHandler(BaseHandler):
         name = request.PUT.get('itemName')
         description = request.PUT.get('description', '')
         completed = request.PUT.get('completed')
+        
+        try:
+            TodoItem.objects.get(name=name, category=category)
+            return HttpResponse('An item with that name already exists in "%s"' % category.name,status=500)
+        except TodoItem.DoesNotExist:
+            pass
+        
         if not all([name, completed]):
             return HttpResponse("Oops, an error has occurred, please try again later",status=500)
         

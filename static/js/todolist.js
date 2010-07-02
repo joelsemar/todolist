@@ -8,7 +8,9 @@ var storeListeners = {
 };
 var todoItemFields = ['name', 'description', 'completed', 'category_id', 'id'];
 function createTabPanel(){
-
+	// For every category the user has, we create a data store, associate 
+	// it with a grid, and then push the grids onto an array, the result can then be used to construct
+	// the tab panel
     var tabObjects = [];
     var columns = createColumns();
     for (var i = 0; i < categories.length; i++) {
@@ -21,8 +23,8 @@ function createTabPanel(){
             autoLoad: true,
             listeners: storeListeners
         });
-        tabObjects.push({
-        
+        //the 'tabObjects' are the individual grids that will make up the tabPanel
+		tabObjects.push({
             title: capWord(category.name),
             id: 'tab_{0}'.strFormat(category.id),
             store: store,
