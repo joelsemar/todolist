@@ -2,7 +2,11 @@
 var addCategoryDialog;
 var addItemDialog;
 var tabPanel;
-var currentTab;
+var storeListeners = {
+    'add': createItemEventHandler,
+    'update': updateItemEventHandler,
+    'delete': deleteItemEventHandler
+};
 var todoItemFields = ['name', 'description', 'completed', 'category_id', 'id'];
 function createTabPanel(){
 
@@ -16,11 +20,7 @@ function createTabPanel(){
             url: '/category/{0}/items/'.strFormat(category.id),
             autoSave: true,
             autoLoad: true,
-            listeners: {
-                'add': createItemEventHandler,
-                'update': updateItemEventHandler,
-                'delete': deleteItemEventHandler
-            }
+            listeners: storeListeners
         });
         tabObjects.push({
         
@@ -42,7 +42,8 @@ function createTabPanel(){
     var allDataStore = new Ext.data.JsonStore({
         fields: todoItemFields,
         url: '/items/',
-        autoLoad: true
+        autoLoad: true,
+		listeners: storeListeners
     
     });
     tabObjects.unshift({
@@ -62,7 +63,7 @@ function createTabPanel(){
     
     tabPanel = new Ext.TabPanel({
         id: 'tabPanel',
-        activeTab: currentTab ? currentTab : 0,
+        activeTab:  0,
         height: 500,
         deferredRender: true,
         hideMode: Ext.isIE ? 'offsets' : 'display',
@@ -141,7 +142,7 @@ function addNewCategory(){
 	}
 	
 	var content = '<p>Give your new category a name</p>';
-    content += "<input type='text' id='newCategoryName'></input>";
+    content += "<input type='text' id='newCategoryName' maxLength='128'></input>";
     content += '<button type="button" id="newCategoryDialogButton">Create</button>';
     addCategoryDialog = new Ext.Window({
         width: 320,
@@ -184,11 +185,7 @@ function submitNewCategory(){
 				url: '/category/{0}/items/'.strFormat(category.id),
 				autoSave: true,
 				autoLoad: true,
-				listeners: {
-					'add': createItemEventHandler,
-					'update': updateItemEventHandler,
-					'delete': deleteItemEventHandler
-				}
+				listeners: storeListeners
 			});
 			var grid = new Ext.grid.EditorGridPanel({
 				title: capWord(category.name),
@@ -218,7 +215,7 @@ function addNewItem(){
 		return;
     }
     var content = '<p>Give your new item a name</p>';
-    content += "<input type='text' id='newItemName'></input>";
+    content += "<input type='text' id='newItemName' maxLength='128'></input>";
     content += "Category: <select id='categorySelect' name='categoryID'>";
     for (var i = 0; i < categories.length; i++) {
         var category = categories[i];
