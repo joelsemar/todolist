@@ -3,7 +3,7 @@ var addCategoryDialog;
 var addItemDialog;
 var tabPanel;
 var currentTab;
-var todoItemFields = ['name', 'description', 'completed', 'category_id'];
+var todoItemFields = ['name', 'description', 'completed', 'category_id', 'id'];
 function createTabPanel(){
 
     var tabObjects = [];
@@ -49,7 +49,7 @@ function createTabPanel(){
         title: 'All items',
         id: 'allitems_tab',
         store: allDataStore,
-        cm: createColumns(),
+        cm: createColumns(true),
         selModel: new Ext.grid.RowSelectionModel(),
         plugins: new Ext.grid.CheckColumn({
             id: 'completed',
@@ -95,7 +95,7 @@ function createTabPanel(){
     
 }
 
-function createColumns(){
+function createColumns(showcategoryname){
     var checkColumn = new Ext.grid.CheckColumn({
         id: 'completed',
         header: 'Complete',
@@ -175,7 +175,10 @@ function submitNewCategory(){
 			name: newCategoryName
 		},
 		success: function(responseObject){
-			var category = JSON.parse(responseObject.responseText);
+			debugger;
+			var data = JSON.parse(responseObject.responseText);
+			var category = JSON.parse(data.newCategory);
+			categories = JSON.parse(data.allCategories);
 			var store = new Ext.data.JsonStore({
 				fields: todoItemFields,
 				url: '/category/{0}/items/'.strFormat(category.id),
@@ -202,6 +205,7 @@ function submitNewCategory(){
 			
 			});
 			tabPanel.add(grid);
+			tabPanel.setActiveTab(grid.id);
 			addCategoryDialog.hide();
 		}
 	});
@@ -256,6 +260,7 @@ function submitNewItem(){
         category_id: categoryID
     });
     grid.getStore().insert(0, item);
+	grid.getStore().sort();
     addItemDialog.hide();
 }
 

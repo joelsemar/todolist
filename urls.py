@@ -22,7 +22,6 @@ urlpatterns = patterns('todolist.mainapp.views',
      (r'^category/$', 'newCategory'),
      (r'^category/(?P<categoryID>[\d]+)/items/$', itemResource),
      (r'^items/', 'userItemService'),
-     (r'^submitNewItem', 'submitNewItem'), 
 )
 
 

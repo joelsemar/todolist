@@ -70,8 +70,8 @@ def newCategory(request):
     responseDict = {}
     responseDict['newCategory'] = simplejson.dumps(toDict(category), cls=DateTimeAwareJSONEncoder, indent=4)
     responseDict['allCategories'] = simplejson.dumps([toDict(category) for category in allCategories], cls=DateTimeAwareJSONEncoder, indent=4)
-    
-    return HttpResponse(response)
+    return HttpResponse(simplejson.dumps(responseDict))
+    return HttpResponse("{newCategory: %s, allCategories: %s}" % (newCategory, allCategories), status=200)
 
 def userItemService(request):
     """
