@@ -279,9 +279,10 @@ function createItemEventHandler(store, records){
 			 var newItem = JSON.parse(responseObject.responseText);
 			 tabPanel.setActiveTab('tab_{0}'.strFormat(newItem.category_id));
 			 reloadAllDataGrid()
+			 store.reload();
      	 }
 	});
-	store.reload();
+	
 }
 
 
