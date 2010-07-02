@@ -60,8 +60,15 @@ class TodoItemHandler(BaseHandler):
         try:
             todoItem = TodoItem.objects.get(id=itemID)
         except TodoItem.DoesNotExist:
-            return HttpResponse(status=500)
+            return HttpResponse("Oops, an error has occurred, please try again later",status=500)
+        kwargs = {}
+        kwargs['name'] = request.PUT.get('itemName')
+        kwargs['description'] = request.PUT.get('description')
+        kwargs['completed'] = request.PUT.get('completed')
+        if not all([itemName, itemDescription, completed]):
+            return HttpResponse("Oops, an error has occurred, please try again later",status=500)
         
+        id: records.id
         post = Blogpost.objects.get(slug=post_slug)
 
         post.title = request.PUT.get('title')

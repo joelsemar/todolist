@@ -205,13 +205,12 @@ function updateItemEventHandler(store, records){
 		itemName: records.data.name,
 		description: records.data.description,
 		completed: records.data.completed,
-		category_id: records.data.category_id,
 		id: records.id
 	};
 	debugger;
 	Ext.Ajax.request({
 		method: 'PUT',
-		url: '/category/{0}/items/'.strFormat(params.category_id),
+		url: '/category/{0}/items/'.strFormat(records.data.category_id),
 		params: params,
 		success: function(){
 			reloadAllDataGrid();
