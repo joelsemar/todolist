@@ -281,7 +281,7 @@ function createItemEventHandler(store, records){
 			 reloadAllDataGrid()
      	 }
 	});
-
+	store.reload();
 }
 
 
