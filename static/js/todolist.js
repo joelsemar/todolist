@@ -3,11 +3,11 @@ var addCategoryDialog;
 var addItemDialog;
 var tabPanel;
 var currentTab;
+var todoItemFields = ['name', 'description', 'completed', 'category_id'];
 function createTabPanel(){
 
     var tabObjects = [];
     var columns = createColumns();
-    var todoItemFields = ['name', 'description', 'completed', 'category_id'];
     for (var i = 0; i < categories.length; i++) {
         var category = categories[i];
         var url = '/category/{0}/items/'.strFormat(category.id);
@@ -158,7 +158,7 @@ function addNewCategory(){
             }
         }
     });
-    addItemDialog.show(Ext.fly('listHeader'));
+    addCategoryDialog.show(Ext.fly('listHeader'));
     Ext.EventManager.on('newCategoryDialogButton', 'click', submitNewCategory);
 }
 	
@@ -170,7 +170,7 @@ function submitNewCategory(){
 	}
 	Ext.Ajax.request({
 		method: 'POST',
-		url: '/category/'.strFormat(newItem.category_id),
+		url: '/category/',
 		params: {
 			name: newCategoryName
 		},
@@ -187,7 +187,7 @@ function submitNewCategory(){
 					'delete': deleteItemEventHandler
 				}
 			});
-			var grid = new Ext.grid.EditorGrid({
+			var grid = new Ext.grid.EditorGridPanel({
 				title: capWord(category.name),
 				id: 'tab_{0}'.strFormat(category.id),
 				store: store,
@@ -201,6 +201,8 @@ function submitNewCategory(){
 				}),
 			
 			});
+			tabPanel.add(grid);
+			addCategoryDialog.hide();
 		}
 	});
 }

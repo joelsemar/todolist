@@ -50,7 +50,28 @@ def createUser(request):
         return HttpResponse(status=200)
     
     return HttpResponse('A server error has occured, please try again later', status=500)
-        
+
+
+def newCategory(request):
+    if not request.user.is_authenticated():
+        return HttpResponse(status=401)
+    
+    name = request.POST.get('name')
+    if not name:
+        return HttpResponse("Please provide a name for your category", status=500)
+    try:
+        category = Category.objects.get(name=name, user=request.user)
+        return HttpResponse("Please provide a name for your category", status=500)
+    except Category.DoesNotExist:
+        pass
+    
+    category = Category.objects.create(name=name, user=request.user, when_created=datetime.datetime.utcnow())
+    allCategories = Category.objects.filter(user=request.user)
+    responseDict = {}
+    responseDict['newCategory'] = simplejson.dumps(toDict(category), cls=DateTimeAwareJSONEncoder, indent=4)
+    responseDict['allCategories'] = simplejson.dumps([toDict(category) for category in allCategories], cls=DateTimeAwareJSONEncoder, indent=4)
+    
+    return HttpResponse(response)
 
 def userItemService(request):
     """
