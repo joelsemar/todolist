@@ -10,6 +10,7 @@ Ext.Ajax.addListener({'beforerequest': function(){
 Ext.Ajax.addListener({'requestcomplete': function(){
 	Ext.select('.x-grid3-row').setStyle('cursor', 'default');
 }});
+Ext.QuickTips.init();
 function userMessage(type, messageText) {
 	// Takes custom text and displays it using the normal message/error format
 	

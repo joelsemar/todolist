@@ -1,5 +1,5 @@
 
-
+var addCategoryDialog;
 var addItemDialog;
 var tabPanel;
 var currentTab;
@@ -80,7 +80,14 @@ function createTabPanel(){
             iconCls: 'newItem',
             tooltip: 'Click here to add a new todo item',
             handler: addNewItem
-        }],
+        },{
+			text: 'Add a new category',
+			id: 'newCategoryButton',
+			iconCls: 'newItem',
+			tooltip: 'Click here to add a new category',
+			handler: addNewCategory
+			
+		} ],
         renderTo: 'todoTabPanel'
     
     });
@@ -126,6 +133,77 @@ function createColumns(){
 }
 
 
+function addNewCategory(){
+	if(addCategoryDialog){
+		addCategoryDialog.show();
+		Ext.fly('newCategoryName').update('');
+		return;
+	}
+	
+	var content = '<p>Give your new category a name</p>';
+    content += "<input type='text' id='newCategoryName'></input>";
+    content += '<button type="button" id="newCategoryDialogButton">Create</button>';
+    addCategoryDialog = new Ext.Window({
+        width: 320,
+        height: 165,
+        bodyStyle: {
+            padding: '10px'
+        },
+        title: "Create a new Todo Category",
+        html: content,
+        modal: true,
+        listeners: {
+            'beforeshow': function(){
+                addCategoryDialog.focusEl = Ext.get('newCategoryName')
+            }
+        }
+    });
+    addItemDialog.show(Ext.fly('listHeader'));
+    Ext.EventManager.on('newCategoryDialogButton', 'click', submitNewCategory);
+}
+	
+	
+function submitNewCategory(){
+	var newCategoryName = Ext.fly('newCategoryName').getValue();
+	if (!newCategoryName) {
+		return;
+	}
+	Ext.Ajax.request({
+		method: 'POST',
+		url: '/category/'.strFormat(newItem.category_id),
+		params: {
+			name: newCategoryName
+		},
+		success: function(responseObject){
+			var category = JSON.parse(responseObject.responseText);
+			var store = new Ext.data.JsonStore({
+				fields: todoItemFields,
+				url: '/category/{0}/items/'.strFormat(category.id),
+				autoSave: true,
+				autoLoad: true,
+				listeners: {
+					'add': createItemEventHandler,
+					'update': updateItemEventHandler,
+					'delete': deleteItemEventHandler
+				}
+			});
+			var grid = new Ext.grid.EditorGrid({
+				title: capWord(category.name),
+				id: 'tab_{0}'.strFormat(category.id),
+				store: store,
+				cm: createColumns(),
+				selModel: new Ext.grid.RowSelectionModel(),
+				plugins: new Ext.grid.CheckColumn({
+					id: 'completed',
+					header: 'Complete',
+					dataIndex: 'completed',
+					width: 25
+				}),
+			
+			});
+		}
+	});
+}
 
 function addNewItem(){
     if (addItemDialog) {
@@ -216,7 +294,7 @@ function updateItemEventHandler(store, records){
 		},
 		headers:{'Content-Type': 'application/x-www-form-urlencoded'}
 	});
-
+	store.reload();
 }
 
 function deleteItemEventHandler(store, records){
