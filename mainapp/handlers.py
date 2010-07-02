@@ -32,12 +32,12 @@ class TodoItemHandler(BaseHandler):
         except TodoItem.DoesNotExist:
             pass
         
-        todoItem = TodoItem.objects.create(name=itemName, 
+        todoItem = TodoItem.objects.create(name=itemName,
                                            category=category,
                                            when_created=now,
                                            last_updated=now)
         
-        return HttpResponse(simplejson.dumps(util.toDict(todoItem),cls=DateTimeAwareJSONEncoder, indent=4), status=201)
+        return HttpResponse(simplejson.dumps(util.toDict(todoItem), cls=DateTimeAwareJSONEncoder, indent=4), status=201)
 
     
     def read(self, request, categoryID):
@@ -67,20 +67,22 @@ class TodoItemHandler(BaseHandler):
         try:
             todoItem = TodoItem.objects.get(id=itemID)
         except TodoItem.DoesNotExist:
-            return HttpResponse("Oops, an error has occurred, please try again later",status=500)
+            return HttpResponse("Oops, an error has occurred, please try again later", status=500)
         
         name = request.PUT.get('itemName')
         description = request.PUT.get('description', '')
         completed = request.PUT.get('completed')
         
-        try:
-            TodoItem.objects.get(name=name, category=category)
-            return HttpResponse('An item with that name already exists in "%s"' % category.name,status=500)
-        except TodoItem.DoesNotExist:
-            pass
+        #If they are editing the name, check for dupes
+        if name != todoItem.name:
+            try:
+                TodoItem.objects.get(name=name, category=category)
+                return HttpResponse('An item with that name already exists in "%s"' % category.name, status=500)
+            except TodoItem.DoesNotExist:
+                pass
         
         if not all([name, completed]):
-            return HttpResponse("Oops, an error has occurred, please try again later",status=500)
+            return HttpResponse("Oops, an error has occurred, please try again later", status=500)
         
         todoItem.name = name
         todoItem.description = description
