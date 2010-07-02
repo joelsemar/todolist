@@ -1,11 +1,12 @@
 import re
 import simplejson
+import datetime
 from piston.handler import BaseHandler
 from piston.utils import rc, throttle
 from django.core.serializers.json import DateTimeAwareJSONEncoder
 from django.http import HttpResponse, HttpResponseRedirect
 from todolist.mainapp.models import Category, TodoItem
-from todolist.util import toDict
+from todolist import util
 
 
 class TodoItemHandler(BaseHandler):
@@ -30,7 +31,7 @@ class TodoItemHandler(BaseHandler):
                                            when_created=now,
                                            last_updated=now)
         
-        return HttpResponse(simplejson.dumps(toDict(todoItem),cls=DateTimeAwareJSONEncoder, indent=4), status=201)
+        return HttpResponse(simplejson.dumps(util.toDict(todoItem),cls=DateTimeAwareJSONEncoder, indent=4), status=201)
 
     
     def read(self, request, categoryID):
@@ -43,7 +44,7 @@ class TodoItemHandler(BaseHandler):
             return HttpResponse("Oops, an error has occurred, please try again later", status=500)
         
         todoItems = TodoItem.objects.filter(category=category)
-        response = simplejson.dumps([toDict(item) for item in todoItems], cls=DateTimeAwareJSONEncoder, indent=4)
+        response = simplejson.dumps([util.toDict(item) for item in todoItems], cls=DateTimeAwareJSONEncoder, indent=4)
         return HttpResponse(response)
 
 
@@ -61,23 +62,22 @@ class TodoItemHandler(BaseHandler):
             todoItem = TodoItem.objects.get(id=itemID)
         except TodoItem.DoesNotExist:
             return HttpResponse("Oops, an error has occurred, please try again later",status=500)
-        kwargs = {}
-        kwargs['name'] = request.PUT.get('itemName')
-        kwargs['description'] = request.PUT.get('description')
-        kwargs['completed'] = request.PUT.get('completed')
-        if not all([itemName, itemDescription, completed]):
+        
+        name = request.PUT.get('itemName')
+        description = request.PUT.get('description', '')
+        completed = request.PUT.get('completed')
+        if not all([name, completed]):
             return HttpResponse("Oops, an error has occurred, please try again later",status=500)
         
-        id: records.id
-        post = Blogpost.objects.get(slug=post_slug)
+        todoItem.name = name
+        todoItem.description = description
+        todoItem.category = category
+        todoItem.completed = util.strToBool(completed)
+        todoItem.save()
+        return HttpResponse(simplejson.dumps(util.toDict(todoItem), cls=DateTimeAwareJSONEncoder, indent=4))
 
-        post.title = request.PUT.get('title')
-        post.save()
 
-        return post
-
-
-    def delete(self, request, post_slug):
+    def delete(self, request, categoryID):
         post = Blogpost.objects.get(slug=post_slug)
 
         if not request.user == post.author:

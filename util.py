@@ -17,3 +17,10 @@ def toDict(obj):
             ret[k] = v
     
     return ret
+
+
+def strToBool(str):
+    if not isinstance(str, basestring):
+        raise TypeError
+    
+    return str in ['1', 'True', 'true']

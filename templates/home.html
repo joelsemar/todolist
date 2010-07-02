@@ -3,9 +3,9 @@
 {{block.super}}
 <script type='text/javascript' src="{{MEDIA_URL}}js/todolist.js"></script>
 <script type='text/javascript'>
-	
+	var categories = {{categories|safe}};
 	Ext.onReady(function(){
-		createTabPanel({{categories|safe}});   
+		createTabPanel();   
 	});
 
 </script>

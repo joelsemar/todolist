@@ -15,7 +15,6 @@ function formLogin(event) {
 		url : loginURL,
 		form : form,
 		success : function() {
-			debugger;
 			window.location = '/';
 		},
 		failure : function(responseObject) {

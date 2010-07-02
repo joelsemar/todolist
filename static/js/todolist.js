@@ -3,7 +3,7 @@
 var addItemDialog;
 var tabPanel;
 var currentTab;
-function createTabPanel(categories){
+function createTabPanel(){
 
     var tabObjects = [];
     var columns = createColumns();
@@ -207,7 +207,6 @@ function updateItemEventHandler(store, records){
 		completed: records.data.completed,
 		id: records.id
 	};
-	debugger;
 	Ext.Ajax.request({
 		method: 'PUT',
 		url: '/category/{0}/items/'.strFormat(records.data.category_id),
