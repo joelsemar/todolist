@@ -209,11 +209,7 @@ function submitNewCategory(){
 }
 
 function addNewItem(){
-    if (addItemDialog) {
-        addItemDialog.show();
-		Ext.fly('newItemName').update('');
-		return;
-    }
+    
     var content = '<p>Give your new item a name</p>';
     content += "<input type='text' id='newItemName' maxLength='128'></input>";
     content += "Category: <select id='categorySelect' name='categoryID'>";
