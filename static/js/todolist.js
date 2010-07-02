@@ -77,7 +77,7 @@ function createTabPanel(){
     
 }
 
-function createColumns(showcategoryname){
+function createColumns(){
     var checkColumn = new Ext.grid.CheckColumn({
         id: 'completed',
         header: 'Complete',
@@ -104,8 +104,9 @@ function createColumns(showcategoryname){
             header: 'Description',
             dataIndex: 'description',
             editor: new Ext.form.TextField({
-                allowBlank: false,
+                allowBlank: true,
                 maxLength: 512,
+				validationEvent: false,
                 maxLengthText: "The maximum length for this field is 512 characters"
             })
         }, checkColumn]
