@@ -11,8 +11,6 @@ from todolist.mainapp.handlers import TodoItemHandler
 
 itemResource = Resource(handler=TodoItemHandler)
 
-
-
 urlpatterns = patterns('todolist.mainapp.views',
     # Example:
      (r'^$', 'home'),
