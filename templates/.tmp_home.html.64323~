@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{%block head %}
+{{block.super}}
+<script type='text/javascript' src="{{MEDIA_URL}}js/todolist.js"></script>
+<script type='text/javascript'>
+    var categories = {{categories|safe}}
+    var todoItems = {{todoItems|safe}}
+	Ext.onReady(function(){
+		createTabPanel();   
+	});
+
+</script>
+{% endblock head %}
+{% block mainContent %}
+<div id='logoutLink'><a href='/logout/'>Logout</a></div>
+<h2 style='width: 50%;' id='listHeader'>{{request.user.username|title}}'s To-do List</h2>
+
+<div id='todoTabPanel' >
+</div>
+{% endblock mainContent %}

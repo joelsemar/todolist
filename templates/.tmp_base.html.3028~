@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+	<html>
+		<head>
+		     {%block head %}
+		    <link rel="stylesheet" href="{{MEDIA_URL}}css/reset.css" type="text/css">  
+			<link rel="stylesheet" href="{{MEDIA_URL}}css/styles.css" type="text/css">
+			<link rel="stylesheet" href="{{MEDIA_URL}}js_extjs/resources/css/ext-all.css" type="text/css">
+			<link rel="stylesheet" href="{{MEDIA_URL}}js_extjs/resources/css/xtheme-gray.css" type="text/css">
+			<script type='text/javascript' src="{{MEDIA_URL}}js_extjs/adapter/ext/ext-base.js"></script>		
+			<script type='text/javascript' src="{{MEDIA_URL}}js_extjs/ext-all-debug.js"></script>
+			<script type="text/javascript" src="{{MEDIA_URL}}/js_extjs/examples/ux/CheckColumn.js"></script>
+			<script type='text/javascript' src="{{MEDIA_URL}}js/app.js"></script>
+			<script type='text/javascript' src="{{MEDIA_URL}}js/json2.js"></script>
+			<script type='text/javascript' src="{{MEDIA_URL}}js/utils.js"></script>
+			
+			{% endblock head %}
+		</head>
+		<body>
+        <div id='alertBox'>
+            <div id='alertBoxText'></div>
+        </div>
+		<div id="mainDiv">
+		      {% block mainContent %}
+              {% endblock mainContent %}
+        </div>
+		</body>
+		
+	</html>
+	 

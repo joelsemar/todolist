@@ -1,0 +1,134 @@
+html{
+	background: url('/static/img/texturebg.jpg/') repeat-y;
+	font-family: verdana, sans-serif;
+	font-size: 16px;
+}
+h2{
+    font-weight: bold;
+    padding: 5px;
+
+}
+
+#mainDiv{
+    width: 986px;
+	background-color: #fafaf2;
+	-moz-border-radius:10px;
+	margin: 50px auto;
+	opacity: 0.9;
+	padding: 10px;
+	color: black;
+	position: relative;
+}
+
+
+#loginForm{
+    margin: 0 auto;
+    width: 25%;
+
+}
+.formLabel{
+    padding-top: 10px;
+    
+}
+
+input[type=text], textarea, input[type=password], input[type=file] {
+    padding: 7px;
+    font-size:15px;
+}
+#buttons{
+	padding-top: 10px;
+    overflow:hidden;
+}
+button:hover{
+    background-color: #cce;
+}
+#logoutLink{
+    overflow:hidden;
+    position: absolute;
+    right: 10px;
+    top: 0px;
+    padding: 5px;
+    font-size: 0.8em;
+}
+#logoutLink a{
+    float: right;
+}
+button {
+    margin:3px 3px 3px 3px;
+    border-color:#CCC #BEBEBE #BEBEBE #CCC;
+    border-style:solid;
+    border-width:1px;
+    display:inline;
+    font-family:"Lucida Grande", Tahoma, Arial, Verdana, sans-serif;
+    font-size: 17px;
+    line-height:17px;
+    text-decoration:none;
+    font-weight:bold;
+    color:#565656;
+    cursor:pointer;
+    width:auto;
+    overflow:visible;
+    padding:5px 10px 5px 7px; /* Links */
+    background-color: #EEF7FF;
+    float: right;
+}
+
+button[type] {
+    padding:5px 10px 5px 7px; /* Firefox */
+    line-height:17px; /* Safari */
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+}
+
+#alertBox  {
+	display:none;
+	font-size:1.2em;
+	font-weight:bold;
+	height:auto;
+	line-height:30px;
+	min-height:20px;
+	opacity:0;
+	padding:10px;
+	position:fixed;
+	top: 0;
+	width:100%;
+	z-index:100;
+}
+#alertBoxText{
+    width: 986px;
+    text-align: center;
+    margin: 0 auto;
+    color: #fafaf2;
+}
+
+.errorAlert{
+    background-color: #b00000;
+    color: white;
+}
+.messageAlert{
+    background-color: #386B3C;
+    color: white;
+}
+
+#todoTabPanel{
+    width: 986px;
+    margin-top: 20px;
+}
+
+#categorySelect{
+    margin-top: 10px;
+}
+
+.x-btn-text{
+	padding: 0;
+}
+
+.x-btn button{
+	text-indent: 0px;
+	padding: 0px;
+	line-height: 1em;
+}
+
+.newItem {
+    background-image: url('/static/img/add.png') !important;
+}

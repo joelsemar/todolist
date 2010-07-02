@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{%block head %}
+{{block.super}}
+<script type='text/javascript' src="{{MEDIA_URL}}js/login.js"></script>
+{% endblock head %}
+{% block mainContent %}
+
+<form id='loginForm'>
+    <h2>Login or Create a User</h2>
+    <div class='formLabel'>Username:</div>
+    <input type='text' name='username'></input>
+    <div class='formLabel'>Password:</div>
+    <input type='password' name='password'></input>
+    <div id='buttons'>
+        <button type='button' id='newUserButton'>New User</button>
+        <button type='button' id='loginButton'>Login</button>
+    </div>
+    
+    
+</form>
+
+
+<div id='grid-example' style='background-color:#fafaf2;width: 950px;margin:20px auto;'></div>
+
+{% endblock mainContent %}
